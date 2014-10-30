@@ -6,15 +6,19 @@ function return_result(number, res, array, i){
     return function(error, result){
         if (error){
             res.status(403);
-            res.send(error.message);
+            array.push({
+                number:number,
+                message:error.message
+            });
         }else{
             array.push({
                 number:number,
                 result:result
             });
-            if (i===0){
-                res.json(array);
-            }
+        }
+        if (i===0){
+            array.reverse();
+            res.json(array);
         }
     }
 }

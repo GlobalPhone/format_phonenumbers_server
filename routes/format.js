@@ -6,7 +6,10 @@ function return_result(number,res){
     return function(error, result){
         if (error){
             res.status(403);
-            res.send(error.message);
+            res.json({
+                number:number,
+                message:error.message
+            });
         }else{
             res.json({
                 number:number,
