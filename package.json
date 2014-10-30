@@ -1,5 +1,5 @@
 {
-  "name": "format_numbers_server",
+  "name": "format_phonenumbers_server",
   "version": "1.0.0",
   "description": "Format phonenumbers using nodejs server",
   "scripts": {
@@ -18,7 +18,7 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/wallymathieu/format_numbers_server.git"
+    "url": "https://github.com/wallymathieu/format_phonenumbers_server.git"
   },
   "keywords": [
     "phonenumber"
@@ -26,7 +26,7 @@
   "author": "Oskar Gewalli",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wallymathieu/format_numbers_server/issues"
+    "url": "https://github.com/wallymathieu/format_phonenumbers_server/issues"
   },
-  "homepage": "https://github.com/wallymathieu/format_numbers_server"
+  "homepage": "https://github.com/wallymathieu/format_phonenumbers_server"
 }

@@ -1,4 +1,4 @@
-format_numbers_server
+format_phonenumbers_server
 =====================
 
 node js server to format numbers
