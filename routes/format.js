@@ -23,7 +23,7 @@ function return_result(number, countrycode, res){
     return function(error, result){
         if (error){
             res.status(403);
-             res.render('user_error', {
+            res.render('user_error', {
                 message: error.message,
             });
         }else{

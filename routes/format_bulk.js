@@ -43,15 +43,26 @@ function respondWithJson(res){
         res.json(results);
     };
 }
-
-router.all('/e164/:country_code/:numbers', function(req, res) {
+router.get('/e164/:country_code/:numbers', function(req, res) {
     var numbers = req.params.numbers.split(',');
     var country_code = req.params.country_code;
     forAllNumbersWithCountryCode(numbers, country_code, libphonenumber.e164).then(respondWithJson(res));
 });
 
-router.all('/intl/:country_code/:numbers', function(req, res) {
+router.get('/intl/:country_code/:numbers', function(req, res) {
     var numbers = req.params.numbers.split(',');
+    var country_code = req.params.country_code;
+    forAllNumbersWithCountryCode(numbers, country_code, libphonenumber.intl).then(respondWithJson(res));
+});
+
+router.post('/e164/:country_code', function(req, res) {
+    var numbers = req.body.numbers.split(',');
+    var country_code = req.params.country_code;
+    forAllNumbersWithCountryCode(numbers, country_code, libphonenumber.e164).then(respondWithJson(res));
+});
+
+router.post('/intl/:country_code', function(req, res) {
+    var numbers = req.body.numbers.split(',');
     var country_code = req.params.country_code;
     forAllNumbersWithCountryCode(numbers, country_code, libphonenumber.intl).then(respondWithJson(res));
 });
