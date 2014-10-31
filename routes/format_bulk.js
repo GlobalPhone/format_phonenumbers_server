@@ -1,48 +1,59 @@
 var libphonenumber = require('libphonenumber');
+var Q = require('Q');
 var express = require('express');
 var router = express.Router();
 
-function return_result(number, res, array, i){
+function returnWithResult(number, deferred){
     return function(error, result){
         if (error){
-            res.status(403);
-            array.push({
+            deferred.resolve({
                 number:number,
                 message:error.message
             });
         }else{
-            array.push({
+            deferred.resolve({
                 number:number,
                 result:result
             });
         }
-        if (i===0){
-            array.reverse();
-            res.json(array);
-        }
     }
+}
+
+function forAllNumbersWithCountryCode(numbers, country_code, format){
+    var array = [];
+    numbers.forEach(function(number){
+        var deferred = Q.defer();
+        format(number, 
+            country_code, 
+            returnWithResult(number, deferred));
+        array.push(deferred.promise);
+    });
+    return Q.all(array);
+}
+
+function hasAnError(results){
+    return results.some(function(result){ return 'message' in result; });
+}
+
+function respondWithJson(res){
+    return function(results){
+        if (hasAnError(results)){
+            res.status(403);
+        }
+        res.json(results);
+    };
 }
 
 router.all('/e164/:country_code/:numbers', function(req, res) {
     var numbers = req.params.numbers.split(',');
-    var array = [];
     var country_code = req.params.country_code;
-    for (var i = numbers.length - 1; i >= 0; i--) {
-        libphonenumber.e164(numbers[i], 
-            country_code, 
-            return_result(numbers[i], res, array, i));
-    };
+    forAllNumbersWithCountryCode(numbers, country_code, libphonenumber.e164).then(respondWithJson(res));
 });
 
 router.all('/intl/:country_code/:numbers', function(req, res) {
     var numbers = req.params.numbers.split(',');
-    var array = [];
     var country_code = req.params.country_code;
-    for (var i = numbers.length - 1; i >= 0; i--) {
-        libphonenumber.intl(numbers[i], 
-            country_code, 
-            return_result(numbers[i], res, array, i));
-    };
+    forAllNumbersWithCountryCode(numbers, country_code, libphonenumber.intl).then(respondWithJson(res));
 });
 
 module.exports = router;

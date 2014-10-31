@@ -1,0 +1,11 @@
+extends layout
+
+block content
+    form(method='post')
+        label(for='countrycode') countrycode
+            input(id='countrycode',type='text',value='#{countrycode}',placeholder='',name='countrycode')
+
+        label(for='phonenumber') phonenumber
+            input(id='phonenumber',type='text',value='#{phonenumber}',placeholder='',name='phonenumber')
+        input(type='submit',value='format')
+    span #{phonenumber}
