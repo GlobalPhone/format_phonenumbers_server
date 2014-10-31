@@ -38,7 +38,7 @@ function hasAnError(results){
 function respondWithJson(res){
     return function(results){
         if (hasAnError(results)){
-            res.status(403);
+            res.status(422);
         }
         res.json(results);
     };
