@@ -1,9 +1,18 @@
 var should = require('should'); 
 var assert = require('assert');
 var request = require('supertest');  
+var app = require('../app');
 
-var url = 'http://localhost:3000';
+var url = 'http://localhost:3001';
 describe('Format Bulk', function() {
+  var server;
+  before(function () {
+    server = app.listen(3001);;
+  });
+  after(function () {
+    server.close();
+  });
+
   describe('e164',function(){
     it('should return error trying get invalid number', function(done) {
       var country_code = 'SE';
