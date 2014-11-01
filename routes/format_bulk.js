@@ -1,5 +1,5 @@
 var libphonenumber = require('libphonenumber');
-var Q = require('Q');
+var Q = require('q');
 var express = require('express');
 var router = express.Router();
 
