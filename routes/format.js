@@ -1,61 +1,34 @@
 var libphonenumber = require('libphonenumber');
 var express = require('express');
+var promise = require('bluebird');
+var libphonenumber = promise.promisifyAll(require('libphonenumber'));
+var _ = require('underscore');
 var router = express.Router();
 
-function return_result_json(number,res){
-    return function(error, result){
-        if (error){
-            res.status(422);
-            res.json({
-                number:number,
-                message:error.message
-            });
-        }else{
-            res.json({
-                number:number,
-                result:result
-            });
-        }
-    }
-}
-
-function return_result(number, countrycode, res){
-    return function(error, result){
-        if (error){
-            res.status(422);
-            res.render('user_error', {
-                message: error.message,
-            });
-        }else{
-            res.render('format', {phonenumber: number, countrycode: countrycode, result: result});
-        }
-    }
-}
+router.get('/:country_code/:number', function(req, res, next) {
+    var number = req.params.number;
+    process(req.params.number, req.params.country_code, req, res, next);
+});
 
 router.get('/', function(req, res) {
     res.render('format', {phonenumber:'',countrycode:''});
 });
 
-router.post('/', function(req, res) {
+router.post('/', function(req, res, next) {
     var number = req.body.phonenumber;
     var countrycode = req.body.countrycode||'';
-    libphonenumber.intl(number, 
-        countrycode, 
-        return_result(number, countrycode, res));
+    process(number, country_code, req, res, next);
 });
 
-router.get('/e164/:country_code/:number', function(req, res) {
-    var number = req.params.number;
-    libphonenumber.e164(number, 
-        req.params.country_code, 
-        return_result_json(number, res));
-});
+function process(number, country_code, req, res, next) {
+    function format(formatter) {
+        return libphonenumber[formatter + 'Async'](number, country_code)
+            .then(function (result) { var r= { number: number }; r[formatter] = result; return r; })
+            .catch(function (err) { res.status(422); return { number: number, message: err.message }; });
+    }
+ 
+    return promise.all([format('intl'),format('e164')]).then(function (n) { res.jsonp(_.extend.apply(_,n)); }).catch(next);
+}
 
-router.get('/intl/:country_code/:number', function(req, res) {
-    var number = req.params.number;
-    libphonenumber.intl(number, 
-        req.params.country_code, 
-        return_result_json(number, res));
-});
 
 module.exports = router;

@@ -30,8 +30,8 @@ router.post('/intl/:country_code', function(req, res, next) {
 function process(formatter, numbers, country_code, req, res, next) {
     function format(n) {
         return libphonenumber[formatter + 'Async'](n, country_code)
-            .then(function (result) { return { number: n, result: result } })
-            .catch(function (err) { res.status(422); return { number: n, message: err.message } });
+            .then(function (result) { return { number: n, result: result }; })
+            .catch(function (err) { res.status(422); return { number: n, message: err.message }; });
     }
  
     return promise.all(numbers.map(format)).then(function (n) { res.jsonp(n); }).catch(next);

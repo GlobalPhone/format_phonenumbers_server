@@ -12,60 +12,34 @@ describe('Format', function() {
     server.close();
   });
 
-  function requestFormat(formatter, country_code, number){
+  function requestFormat(country_code, number){
     var url = 'http://localhost:3002';
     return request(url)
-        .get('/format/'+formatter+'/'+country_code+'/'+number)
+        .get('/format/'+country_code+'/'+number)
         .expect('Content-Type', /json/);
   }
 
-  describe('e164',function(){
-    it('should return error trying get invalid number', function(done) {
-      var country_code = 'SE';
-      var number = '124311';
-      requestFormat('e164',country_code,number)
-        .end(function(err, res) {
-          should.not.exist(err);
-          res.status.should.equal(422);
-          done();
-        });
-    });
-    it('should return formatted number when valid', function(done) {
-      var country_code = 'SE';
-      var number = '0767201010';
-      requestFormat('e164',country_code,number)
-        .end(function(err, res) {
-          should.not.exist(err);
-          res.status.should.equal(200);
-          res.body.result.should.equal('+46767201010');
-          done();
-        });
-    });
+  it('should return error trying get invalid number', function(done) {
+    var country_code = 'SE';
+    var number = '124311';
+    requestFormat(country_code,number)
+      .end(function(err, res) {
+        should.not.exist(err);
+        res.status.should.equal(422);
+        done();
+      });
   });
-
-  describe('intl',function(){
-    it('should return error trying get invalid number', function(done) {
-      var country_code = 'SE';
-      var number = '1243';
-      requestFormat('intl',country_code,number)
-        .end(function(err, res) {
-          should.not.exist(err);
-          res.status.should.equal(422);
-          done();
-        });
-    });
-
-    it('should return formatted number when valid', function(done) {
-      var country_code = 'SE';
-      var number = '0767201010';
-      requestFormat('intl',country_code,number)
-        .end(function(err, res) {
-          should.not.exist(err);
-          res.status.should.equal(200);
-          res.body.result.should.equal('+46 76 720 10 10');
-          done();
-        });
-    });
+  it('should return formatted number when valid', function(done) {
+    var country_code = 'SE';
+    var number = '0767201010';
+    requestFormat(country_code,number)
+      .end(function(err, res) {
+        should.not.exist(err);
+        res.status.should.equal(200);
+        res.body.e164.should.equal('+46767201010');
+        res.body.intl.should.equal('+46 76 720 10 10');
+        done();
+      });
   });
 
 });
